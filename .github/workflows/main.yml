@@ -24,20 +24,28 @@ jobs:
       with:
         node-version: 18
 
+    - name: Prepare Clean Web Assets Folder (www)
+      run: |
+        # www എന്ന പേരില്‍ ഒരു പുതിയ ഫോള്‍ഡര്‍ ഉണ്ടാക്കുന്നു
+        mkdir -p www
+        # വെബ് ഫയലുകള്‍ മാത്രം (HTML, JS, CSS, ചിത്രങ്ങള്‍) www ഫോള്‍ഡറിലേക്ക് മാറ്റുന്നു
+        # node_modules, .git, .github എന്നിവ ഒഴിവാക്കും
+        rsync -av --exclude='node_modules' --exclude='.git' --exclude='.github' --exclude='android' --exclude='www' ./ www/
+
     - name: Install Capacitor & Wrap App
       run: |
-        # package.json ഫയൽ ഇല്ലെങ്കിൽ പുതിയത് ഉണ്ടാക്കാൻ
+        # package.json ഫയല്‍ ഇല്ലെങ്കില്‍ ഉണ്ടാക്കുന്നു
         if [ ! -f package.json ]; then
           npm init -y
         fi
         
-        # കാപ്പാസിറ്റർ ഇൻസ്റ്റാൾ ചെയ്യാൻ
+        # കാപ്പാസിറ്റര്‍ ഇന്‍സ്റ്റാള്‍ ചെയ്യുന്നു
         npm install @capacitor/core @capacitor/cli @capacitor/android
         
-        # വെബ് ആപ്പ് വിവരങ്ങൾ വെച്ച് കാപ്പാസിറ്റർ സെറ്റ് ചെയ്യാൻ
-        npx cap init "V Astra Create" "com.vpriya.vastra" --web-dir=. --confirm
+        # www ഫോള്‍ഡര്‍ മെയിന്‍ വെബ് ഡയറക്ടറിയാക്കി കാപ്പാസിറ്റര്‍ സെറ്റ് ചെയ്യുന്നു
+        npx cap init "V Astra Create" "com.vpriya.vastra" --web-dir=www --confirm
         
-        # ആൻഡ്രോയിഡ് പ്ലാറ്റ്‌ഫോം ആഡ് ചെയ്യാൻ
+        # ആന്‍ഡ്രോയിഡ് പ്ലാറ്റ്‌ഫോം ആഡ് ചെയ്യുന്നു
         npx cap add android
 
     - name: Sync Web Assets to Android Project
@@ -46,7 +54,6 @@ jobs:
 
     - name: Give Execute Permission to Gradle
       run: |
-        # ബിൽഡ് എറർ വരാതിരിക്കാൻ പെർമിഷൻ കൊടുക്കുന്നു
         chmod +x android/gradlew
 
     - name: Build Debug APK
