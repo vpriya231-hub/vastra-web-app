@@ -1,3 +1,4 @@
+```yaml
 name: Build Android App from Web
 
 on:
@@ -26,23 +27,28 @@ jobs:
 
     - name: Install Capacitor & Wrap App
       run: |
-        # Initialize npm if package.json doesn't exist
+        # package.json ഫയൽ ഇല്ലെങ്കിൽ പുതിയത് ഉണ്ടാക്കാൻ
         if [ ! -f package.json ]; then
           npm init -y
         fi
         
-        # Install Capacitor dependencies
+        # കാപ്പാസിറ്റർ ഇൻസ്റ്റാൾ ചെയ്യാൻ
         npm install @capacitor/core @capacitor/cli @capacitor/android
         
-        # Initialize Capacitor configuration with app details
+        # വെബ് ആപ്പ് വിവരങ്ങൾ വെച്ച് കാപ്പാസിറ്റർ സെറ്റ് ചെയ്യാൻ
         npx cap init "V Astra Create" "com.vpriya.vastra" --web-dir=. --confirm
         
-        # Add Android Platform
+        # ആൻഡ്രോയിഡ് പ്ലാറ്റ്‌ഫോം ആഡ് ചെയ്യാൻ
         npx cap add android
 
     - name: Sync Web Assets to Android Project
       run: |
         npx cap sync android
+
+    - name: Give Execute Permission to Gradle
+      run: |
+        # ബിൽഡ് എറർ വരാതിരിക്കാൻ പെർമിഷൻ കൊടുക്കുന്നു
+        chmod +x android/gradlew
 
     - name: Build Debug APK
       run: |
@@ -65,3 +71,6 @@ jobs:
       with:
         name: V-Astra-Release-AAB
         path: android/app/build/outputs/bundle/release/app-release.aab
+
+```
+
